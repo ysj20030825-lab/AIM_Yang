@@ -47,10 +47,10 @@ public:
             }
         }
         // 3) Pure Pursuit 조향각 계산
-        double dx = lx - cur.x;
-        double dy = ly - cur.y;
+        double dx1 = lx - cur.x;
+        double dy1 = ly - cur.y;
 
-        double Ld = std::sqrt(dx*dx + dy*dy);
+        double Ld = std::sqrt(dx1*dx1 + dy1*dy1);
         if (Ld < 1e-6) return 0.0;
 
         double target_angle = std::atan2(dy, dx);
