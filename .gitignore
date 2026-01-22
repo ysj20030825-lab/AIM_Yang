@@ -1,0 +1,15 @@
+# ROS / catkin build artifacts
+build/
+devel/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VSCode
+.vscode/
+
+# OS junk
+.DS_Store
