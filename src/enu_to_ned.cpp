@@ -7,7 +7,7 @@
 
 class EnuToNed1 {
 public:
-  EnuToNed1(ros::NodeHandle& nh):L{0.5}{
+  EnuToNed1(ros::NodeHandle& nh){
     tf_topic_ = "/tf";
     rpy_ned_topic_ = "/rpy_ned";
 
@@ -48,7 +48,6 @@ private:
     std::cout<<"ENU: "<<enu.roll<<", "<<enu.pitch<<", "<<enu.yaw<<std::endl<<"NED: "<<ned.roll
     <<", "<<ned.pitch<<", "<<ned.yaw<<std::endl<<"dR: "<<dr<<", dP: "<<dp<<", dY: "<<dy<<std::endl;
   }
-  double L;
   ros::Subscriber sub_;
   ros::Publisher  pub_rpy_ned_;
 
