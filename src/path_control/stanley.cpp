@@ -3,7 +3,7 @@ using namespace std;
 
 const float pi{3.141592};
 const float L{0.5};
-float k{0.53};
+float k{5};
 int last_closest_i = 0;
 int window_pts = 30;
 int max_steer=30;
@@ -133,7 +133,7 @@ int main(int argc, char** argv){
     ros::Rate rate(20);
     ros::Publisher pub_ctrl = nh.advertise<morai_msgs::CtrlCmd>("/ctrl_cmd_0", 10);
     string csv_path;
-    nh.param<string>("waypoints_csv", csv_path, "/home/yang/aim_ws/src/aim_hw/paths/path.csv");
+    nh.param<string>("waypoints_csv", csv_path, "/home/aim/aim_ws/waypoints_raw.csv");
     path=loadCSV(csv_path);
     float heading_error, track_error;
     int close_index;
@@ -152,13 +152,17 @@ int main(int argc, char** argv){
         heading_error = getHeadingError(curr_front_pos, path[close_index]);
         delta=getSteeringAngle(track_error, heading_error, max_steer);
         cmd.longlCmdType = 2;  
-        cmd.front_steer = delta;
+        cmd.steering = delta;
         cmd.accel = 0.0;
         cmd.brake = 0.0;
         cmd.acceleration = 0.0;
         cmd.velocity = 22.0;
         pub_ctrl.publish(cmd);
         cout << delta << endl;
+        std::cout << "cte_term(rad)=" << track_error
+          << " heading(rad)=" << heading_error
+          << " delta(rad)=" << delta
+          << " idx=" << close_index << "\n";
         rate.sleep();         
     }
     return 0;

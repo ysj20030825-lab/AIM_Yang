@@ -25,7 +25,7 @@ public:
         sub_ego_ = nh.subscribe("/utm_from_wgs", 10, &PurePursuit::utmCb, this);
         sub_ = nh.subscribe("/tf", 10, &PurePursuit::tfCb, this);
         string csv_path;
-        nh.param<string>("waypoints_csv", csv_path, "/home/autonav/aim_hw/waypoints_sam.csv");
+        nh.param<string>("waypoints_csv", csv_path, "/home/aim/aim_ws/waypoints_raw.csv");
         loadCSV(csv_path);
     }
 
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
         }
         ld=cmd.velocity *0.07;
         cout<<"ld: " << ld << endl;
-        cmd.front_steer = delta;
+        cmd.steering = delta;
         cmd.accel = 0.0;
         cmd.brake = 0.0;
         cmd.acceleration = 0.0;
