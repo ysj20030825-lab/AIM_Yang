@@ -56,23 +56,26 @@ add_executable(custom_sub src/1week/custom_sub.cpp)
 add_dependencies(custom_sub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(custom_sub ${catkin_LIBRARIES})
 
-add_library(geo_utils src/geo_utils.cpp)
+add_library(geo_utils src/coordinate/geo_utils.cpp)
 target_link_libraries(geo_utils
   ${catkin_LIBRARIES}
   ${GeographicLib_LIBRARIES}
 )
 
-add_executable(wgs84_to_utm src/wgs84_to_utm.cpp)
+add_executable(wgs84_to_utm src/coordinate/wgs84_to_utm.cpp)
 target_link_libraries(wgs84_to_utm geo_utils ${catkin_LIBRARIES})
 
-add_executable(wgs84_to_enu src/wgs84_to_enu.cpp)
+add_executable(wgs84_to_enu src/coordinate/wgs84_to_enu.cpp)
 target_link_libraries(wgs84_to_enu geo_utils ${catkin_LIBRARIES})
 
-add_executable(utm_to_enu src/utm_to_enu.cpp)
+add_executable(utm_to_enu src/coordinate/utm_to_enu.cpp)
 target_link_libraries(utm_to_enu geo_utils ${catkin_LIBRARIES})
 
-add_executable(enu_to_ned src/enu_to_ned.cpp)
+add_executable(enu_to_ned src/coordinate/enu_to_ned.cpp)
 target_link_libraries(enu_to_ned geo_utils ${catkin_LIBRARIES})
 
-add_executable(pure_pursuit src/pure_pursuit.cpp)
+add_executable(pure_pursuit src/path_control/pure_pursuit.cpp)
 target_link_libraries(pure_pursuit geo_utils ${catkin_LIBRARIES})
+
+add_executable(stanley src/path_control/stanley.cpp)
+target_link_libraries(stanley geo_utils ${catkin_LIBRARIES})

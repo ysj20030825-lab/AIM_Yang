@@ -19,7 +19,7 @@ public:
 
 private:
   void tfCb(const tf2_msgs::TFMessageConstPtr& msg) {
-    tf2::Quaternion q_tf;     
+    tf2::Quaternion q_tf;   
     for (const auto& t : msg->transforms) {
       if (t.header.frame_id == "/map" && t.child_frame_id == "/base_link") {
         const auto& q = t.transform.rotation;
