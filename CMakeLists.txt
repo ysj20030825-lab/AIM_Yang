@@ -32,6 +32,8 @@ include_directories(
   ${GeographicLib_INCLUDE_DIRS}
 )
 
+add_compile_options(-std=c++17)
+
 #############
 ##  Build  ##
 #############

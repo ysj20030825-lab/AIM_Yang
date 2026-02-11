@@ -14,19 +14,18 @@ public:
     sub_ = nh.subscribe(wgs_topic_, 10, &Wgs84ToEnuNode::wgsCb, this);
     pub_ = nh.advertise<geometry_msgs::Vector3Stamped>(enu_topic_, 10);
     //std::cout<<"wgs: "<<wgs_topic_<<" enu: "<<enu_topic_<<std::endl;
+    nh.param("ref_lat", origin_.lat_deg, 37.238838359501933);
+    nh.param("ref_lon", origin_.lon_deg, 126.772902206454901);
+    nh.param("ref_alt", origin_.alt_m,   0.0);
+
+    origin_tf = true;
   }
 
 private:
   void wgsCb(const morai_msgs::GPSMessageConstPtr& msg) {
 
     WGS wgs{msg->latitude, msg->longitude, msg->altitude};
-
-    // 첫 GPS를 origin으로 저장
-    if (!origin_tf) {
-      origin_ = wgs;
-      origin_tf = true;
-      std::cout<<origin_.lat_deg<<", "<<origin_.lon_deg<<", "<<origin_.alt_m<<std::endl;
-    }
+    
     Vec enu = GeoUtils::Wgs84ToEnu(wgs, origin_);
 
     geometry_msgs::Vector3Stamped out;
