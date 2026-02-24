@@ -81,3 +81,6 @@ target_link_libraries(pure_pursuit geo_utils ${catkin_LIBRARIES})
 
 add_executable(stanley src/path_control/stanley.cpp)
 target_link_libraries(stanley geo_utils ${catkin_LIBRARIES})
+
+add_executable(path_control src/path_control/path_control.cpp)
+target_link_libraries(path_control geo_utils ${catkin_LIBRARIES})
