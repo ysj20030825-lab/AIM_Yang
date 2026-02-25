@@ -12,7 +12,7 @@ struct Waypoint {
 vector<Waypoint> path;
 Waypoint curr_pos;
 const float L{1.5};
-float k{10};
+float k{20};
 
 void enuCb(const geometry_msgs::Vector3StampedConstPtr& msg) {
   curr_pos.x = msg->vector.x;
@@ -188,33 +188,17 @@ int main(int argc, char** argv){
         lookahead=getLookahead(close_index,ld);
         pp_angle_rad=getPPAngle(lookahead,curr_pos);
         stanley_angle_rad=getStanleyAngle(track_error, heading_error, max_steer);
-
-        cout<<"current_position : "<<curr_pos.x<<", "<<curr_pos.y<<", "<<curr_pos.yaw<<endl;
-        cout<<"closet_index : "<<curr_wp.x<<", "<<curr_wp.y<<", "<<curr_wp.yaw<<endl;
-        cout<<"heading : "<<(curr_pos.yaw/M_PI*180)<<endl;
-
         float dyaw = std::abs(wrapPi(lookahead.yaw - path[close_index].yaw));
-        float vc = 55.0f;   // km/h, 고속의 기준
-        float sv = 10.0f;   // km/h, 민감도
-        float dc=0.08f; //커브의 기준
-        float sd= 0.03; //민감도
-        float w_curve = sigmoid((dyaw - dc) / sd);
-        float w_speed = 1.0f - sigmoid((v - vc) / sv);
-        stanley_ratio=std::clamp(w_curve*w_speed,0.0f,1.0f);
-        double steer=stanley_ratio*stanley_angle_rad+(1-stanley_ratio)*pp_angle_rad;
 
-        ld=cmd.velocity *0.07;
-        cmd.longlCmdType = 2;  
-        cmd.steering = steer;
-        cmd.accel = 0.0;
-        cmd.brake = 0.0;
-        cmd.acceleration = 0.0;
-        
+        //cout<<"current_position : "<<curr_pos.x<<", "<<curr_pos.y<<", "<<curr_pos.yaw<<endl;
+        //cout<<"closet_index : "<<curr_wp.x<<", "<<curr_wp.y<<", "<<curr_wp.yaw<<endl;
+        //cout<<"heading : "<<(curr_pos.yaw/M_PI*180)<<endl;
+
         if( dyaw < 0.03 ){
             cmd.velocity = 30.0;
             v=cmd.velocity;
         }
-        else if(dyaw < 0.18){
+        else if(dyaw < 0.07){
             cmd.velocity = 22.0;
             v=cmd.velocity;
         }
@@ -222,11 +206,24 @@ int main(int argc, char** argv){
             cmd.velocity = 17.0;
             v=cmd.velocity;
         }
+        cout<<"dyaw: "<<dyaw<<endl<<"stanley_ratio: "<<stanley_ratio<<endl;
+        float vc = 25.0f;   // km/h, 고속의 기준
+        float sv = 12.0f;   // km/h, 민감도
+        float dc=0.08f; //커브의 기준
+        float sd= 0.03; //민감도
+        float w_curve = sigmoid((dyaw - dc) / sd);
+        float w_speed = 1.0f - sigmoid((v - vc) / sv);
+        stanley_ratio = std::clamp( 0.85f*w_curve + 0.15f*w_speed , 0.0f, 1.0f);
+        double steer=stanley_ratio*stanley_angle_rad+(1-stanley_ratio)*pp_angle_rad;
+
+        ld = std::clamp(v * 0.12f, 4.0f, 12.0f);
+        cmd.longlCmdType = 2;  
+        cmd.steering = steer;
+        cmd.accel = 0.0;
+        cmd.brake = 0.0;
+        cmd.acceleration = 0.0;
         pub_ctrl.publish(cmd);
-        std::cout << "cte_term(rad)=" << track_error
-          << " heading(rad)=" << heading_error
-          << " delta(rad)=" << steer
-          << " idx=" << close_index << "\n";
+        //std::cout << "delta: "<<steer<<endl<<"stanley_ratio: "<<stanley_ratio<<endl<<"lookahead:"<<ld<<endl;
         rate.sleep();         
     }
     return 0;

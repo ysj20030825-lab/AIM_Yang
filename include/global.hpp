@@ -14,4 +14,5 @@
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_msgs/TFMessage.h>
 #include <morai_msgs/CtrlCmd.h>
+#include <morai_msgs/EgoVehicleStatus.h>
 #include <sensor_msgs/Imu.h>
